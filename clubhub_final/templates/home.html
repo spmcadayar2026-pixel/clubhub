@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}ClubHub — Home{% endblock %}
+{% block content %}
+
+<h1>Welcome to <span style="background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;">ClubHub</span></h1>
+<p class="sub">Your club's all-in-one free management webapp</p>
+
+<div class="grid4" style="margin-bottom:2rem;">
+  <div class="stat"><div class="stat-label">Upcoming Events</div><div class="stat-val" style="color:var(--accent)">{{ events|length }}</div></div>
+  <div class="stat"><div class="stat-label">Total Collected ₹</div><div class="stat-val" style="color:var(--success)">{{ "%.0f"|format(total) }}</div></div>
+  <div class="stat"><div class="stat-label">Subscribers</div><div class="stat-val" style="color:var(--accent2)">{{ members }}</div></div>
+  <div class="stat"><div class="stat-label">Feedback</div><div class="stat-val" style="color:var(--accent3)">{{ feedback_cnt }}</div></div>
+</div>
+
+<div class="sec-title">Upcoming Events <a href="/events/add" class="btn btn-primary btn-sm">+ Add</a></div>
+
+{% if events %}
+  <div style="display:grid;gap:.75rem;margin-bottom:2rem;">
+    {% for e in events %}
+    <div class="card" style="display:flex;gap:1.25rem;align-items:center;">
+      <div style="background:var(--surface2);border-radius:10px;padding:10px 14px;text-align:center;min-width:56px;border:1px solid var(--border);">
+        <div style="font-family:var(--hf);font-size:1.4rem;font-weight:800;color:var(--accent);line-height:1;">{{ e.date[8:10] }}</div>
+        <div style="font-size:0.7rem;color:var(--muted);text-transform:uppercase;">{{ e.date[5:7] }}/{{ e.date[:4] }}</div>
+      </div>
+      <div style="flex:1;">
+        <div style="font-family:var(--hf);font-weight:700;font-size:1rem;">{{ e.title }}</div>
+        <div style="color:var(--muted);font-size:0.83rem;margin-top:2px;">
+          {% if e.time %}🕐 {{ e.time }} &nbsp;{% endif %}
+          {% if e.location %}📍 {{ e.location }}{% endif %}
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+{% else %}
+  <div class="card" style="margin-bottom:2rem;"><div class="empty"><div class="ico">📅</div><p>No upcoming events. <a href="/events/add" style="color:var(--accent);">Add one!</a></p></div></div>
+{% endif %}
+
+<div class="sec-title">Quick Access</div>
+<div class="grid4">
+  {% for href, ico, label, desc in [
+    ('/events','📅','Events','Manage calendar'),
+    ('/payments','💰','Payments','Track dues'),
+    ('/newsletter','📨','Newsletter','Email members'),
+    ('/feedback','💬','Feedback','Collect ratings')
+  ] %}
+  <a href="{{ href }}" class="card" style="text-decoration:none;display:block;">
+    <div style="font-size:1.6rem;margin-bottom:6px;">{{ ico }}</div>
+    <div style="font-family:var(--hf);font-weight:700;">{{ label }}</div>
+    <div style="color:var(--muted);font-size:0.83rem;margin-top:2px;">{{ desc }}</div>
+  </a>
+  {% endfor %}
+</div>
+
+{% endblock %}

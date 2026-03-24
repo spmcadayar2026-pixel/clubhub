@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block title %}Feedback — ClubHub{% endblock %}
+{% block content %}
+<h1>💬 Feedback</h1><p class="sub">Collect and review member responses</p>
+
+<div class="grid2" style="margin-bottom:2rem;">
+  <div class="card">
+    <div class="sec-title" style="margin-bottom:1rem;">Submit Feedback</div>
+    <form method="POST" action="/feedback/submit">
+      <div class="fg" style="margin-bottom:.75rem;"><label>Your Name *</label><input type="text" name="name" placeholder="Your name" required></div>
+      <div class="fg" style="margin-bottom:.75rem;"><label>Category</label>
+        <select name="category">
+          <option>General</option><option>Event Feedback</option><option>Suggestion</option><option>Complaint</option><option>Appreciation</option>
+        </select>
+      </div>
+      <div class="fg" style="margin-bottom:.75rem;">
+        <label>Rating *</label>
+        <div id="stars" style="display:flex;gap:8px;margin-top:4px;">
+          {% for i in range(1,6) %}
+          <label style="cursor:pointer;font-size:1.8rem;line-height:1;color:var(--muted);transition:color .1s;" class="sl" data-v="{{ i }}">
+            <input type="radio" name="rating" value="{{ i }}" required style="display:none;">★
+          </label>
+          {% endfor %}
+        </div>
+      </div>
+      <div class="fg" style="margin-bottom:1rem;"><label>Message *</label><textarea name="message" placeholder="Your thoughts..." required></textarea></div>
+      <button type="submit" class="btn btn-primary" style="width:100%;">Submit Feedback</button>
+    </form>
+  </div>
+
+  <div>
+    <div class="stat" style="margin-bottom:1rem;">
+      <div class="stat-label">Average Rating</div>
+      <div class="stat-val" style="color:var(--accent2);">{{ avg }} <span style="font-size:1.2rem;">★</span></div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Total Responses</div>
+      <div class="stat-val" style="color:var(--accent);">{{ feedbacks|length }}</div>
+    </div>
+  </div>
+</div>
+
+<div class="sec-title">All Feedback</div>
+{% if feedbacks %}
+<div style="display:grid;gap:.75rem;">
+  {% for f in feedbacks %}
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;">
+      <div>
+        <strong style="font-family:var(--hf);">{{ f.name }}</strong>
+        <span class="badge b-purple" style="margin-left:6px;">{{ f.category }}</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:.75rem;">
+        <span style="color:var(--accent2);">{% for i in range(f.rating) %}★{% endfor %}{% for i in range(5-f.rating) %}☆{% endfor %}</span>
+        <a href="/feedback/delete/{{ f.id }}" class="btn btn-del btn-sm" onclick="return confirm('Delete?')">Delete</a>
+      </div>
+    </div>
+    <p style="color:var(--muted);font-size:.87rem;">{{ f.message }}</p>
+    <div style="color:var(--muted);font-size:.75rem;margin-top:6px;">{{ f.submitted_at[:16] }}</div>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<div class="card"><div class="empty"><div class="ico">💬</div><p>No feedback yet. Share the link with your club members!</p></div></div>
+{% endif %}
+
+<script>
+const stars = document.querySelectorAll('.sl');
+stars.forEach((s,i) => {
+  s.addEventListener('click', () => {
+    s.querySelector('input').checked = true;
+    stars.forEach((x,j) => x.style.color = j<=i ? 'var(--accent2)' : 'var(--muted)');
+  });
+  s.addEventListener('mouseenter', () => stars.forEach((x,j) => x.style.color = j<=i ? 'var(--accent2)' : 'var(--muted)'));
+});
+document.getElementById('stars').addEventListener('mouseleave', () => {
+  const v = document.querySelector('input[name="rating"]:checked');
+  const idx = v ? parseInt(v.value)-1 : -1;
+  stars.forEach((x,j) => x.style.color = j<=idx ? 'var(--accent2)' : 'var(--muted)');
+});
+</script>
+{% endblock %}

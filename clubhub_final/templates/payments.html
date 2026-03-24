@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Payments — ClubHub{% endblock %}
+{% block content %}
+
+<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:2rem;">
+  <div><h1>💰 Payments</h1><p class="sub" style="margin:0;">Track dues and collections</p></div>
+  <a href="/payments/add" class="btn btn-primary">+ Record Payment</a>
+</div>
+
+<div class="grid3" style="margin-bottom:2rem;">
+  <div class="stat"><div class="stat-label">Total Collected ₹</div><div class="stat-val" style="color:var(--success)">{{ "%.0f"|format(total_paid) }}</div></div>
+  <div class="stat"><div class="stat-label">Pending ₹</div><div class="stat-val" style="color:var(--warning)">{{ "%.0f"|format(total_pend) }}</div></div>
+  <div class="stat"><div class="stat-label">Records</div><div class="stat-val" style="color:var(--accent)">{{ payments|length }}</div></div>
+</div>
+
+{% if payments %}
+<div class="tw">
+  <table>
+    <thead><tr><th>Member</th><th>Purpose</th><th>Amount ₹</th><th>Date</th><th>Status</th><th>Notes</th><th></th></tr></thead>
+    <tbody>
+      {% for p in payments %}
+      <tr>
+        <td><strong>{{ p.member_name }}</strong></td>
+        <td>{{ p.purpose }}</td>
+        <td style="font-family:var(--hf);font-weight:700;">{{ "%.0f"|format(p.amount) }}</td>
+        <td style="color:var(--muted);">{{ p.date }}</td>
+        <td><span class="badge {{ 'b-green' if p.status=='Paid' else 'b-yellow' }}">{{ p.status }}</span></td>
+        <td style="color:var(--muted);font-size:.83rem;">{{ p.notes or '—' }}</td>
+        <td><a href="/payments/delete/{{ p.id }}" class="btn btn-del btn-sm" onclick="return confirm('Delete?')">Delete</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="card"><div class="empty"><div class="ico">💰</div><p>No records yet. <a href="/payments/add" style="color:var(--accent);">Add first payment!</a></p></div></div>
+{% endif %}
+
+{% endblock %}

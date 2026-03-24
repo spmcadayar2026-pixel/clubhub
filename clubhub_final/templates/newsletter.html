@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}Newsletter — ClubHub{% endblock %}
+{% block content %}
+<h1>📨 Newsletter</h1><p class="sub">Manage subscribers and send updates</p>
+
+<div class="grid2" style="margin-bottom:2rem;">
+  <div class="card">
+    <div class="sec-title" style="margin-bottom:1rem;">Add Subscriber</div>
+    <form method="POST" action="/newsletter/subscribe">
+      <div class="fg" style="margin-bottom:.75rem;"><label>Name *</label><input type="text" name="name" placeholder="Friend's name" required></div>
+      <div class="fg" style="margin-bottom:1rem;"><label>Email *</label><input type="email" name="email" placeholder="friend@email.com" required></div>
+      <button type="submit" class="btn btn-primary" style="width:100%;">Add Subscriber</button>
+    </form>
+  </div>
+
+  <div class="card">
+    <div class="sec-title" style="margin-bottom:1rem;">Send Newsletter <span class="badge b-purple">{{ subs|length }} subscribers</span></div>
+    <form method="POST" action="/newsletter/send">
+      <div class="fg" style="margin-bottom:.75rem;"><label>Subject *</label><input type="text" name="subject" placeholder="e.g. July Update" required></div>
+      <div class="fg" style="margin-bottom:1rem;"><label>Message *</label><textarea name="body" placeholder="Write your newsletter..." style="min-height:110px;" required></textarea></div>
+      <button type="submit" class="btn btn-primary" style="width:100%;"
+        onclick="return confirm('Send to {{ subs|length }} subscriber(s)?')">Send Newsletter</button>
+    </form>
+  </div>
+</div>
+
+<div class="sec-title">Subscribers ({{ subs|length }})</div>
+{% if subs %}
+<div class="tw" style="margin-bottom:2rem;">
+  <table>
+    <thead><tr><th>Name</th><th>Email</th><th></th></tr></thead>
+    <tbody>
+      {% for s in subs %}
+      <tr>
+        <td><strong>{{ s.name }}</strong></td>
+        <td style="color:var(--muted);">{{ s.email }}</td>
+        <td><a href="/newsletter/remove/{{ s.id }}" class="btn btn-del btn-sm" onclick="return confirm('Remove {{ s.name }}?')">Remove</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="card" style="margin-bottom:2rem;"><div class="empty"><div class="ico">📭</div><p>No subscribers yet. Add friends above!</p></div></div>
+{% endif %}
+
+{% if sent %}
+<div class="sec-title">Sent Newsletters</div>
+<div style="display:grid;gap:.75rem;">
+  {% for n in sent %}
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+      <strong style="font-family:var(--hf);">{{ n.subject }}</strong>
+      <span style="color:var(--muted);font-size:.8rem;">{{ n.sent_at[:16] }}</span>
+    </div>
+    <p style="color:var(--muted);font-size:.87rem;white-space:pre-line;">{{ n.body[:200] }}{% if n.body|length > 200 %}...{% endif %}</p>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+
+{% endblock %}

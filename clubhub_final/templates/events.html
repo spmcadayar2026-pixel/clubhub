@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Events — ClubHub{% endblock %}
+{% block content %}
+
+<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:2rem;">
+  <div><h1>📅 Events</h1><p class="sub" style="margin:0;">Club calendar</p></div>
+  <a href="/events/add" class="btn btn-primary">+ Add Event</a>
+</div>
+
+<div class="sec-title">Upcoming</div>
+{% if upcoming %}
+  <div style="display:grid;gap:.75rem;margin-bottom:2rem;">
+    {% for e in upcoming %}
+    <div class="card" style="display:flex;gap:1.25rem;align-items:flex-start;">
+      <div style="background:var(--surface2);border-radius:10px;padding:10px 14px;text-align:center;min-width:60px;border:1px solid var(--border);">
+        <div style="font-family:var(--hf);font-size:1.4rem;font-weight:800;color:var(--accent);line-height:1;">{{ e.date[8:10] }}</div>
+        <div style="font-size:0.68rem;color:var(--muted);text-transform:uppercase;">{{ e.date[5:7] }}/{{ e.date[:4] }}</div>
+      </div>
+      <div style="flex:1;">
+        <div style="font-family:var(--hf);font-weight:700;font-size:1rem;">{{ e.title }}</div>
+        <div style="color:var(--muted);font-size:0.83rem;margin-top:3px;">
+          {% if e.time %}🕐 {{ e.time }} &nbsp;{% endif %}
+          {% if e.location %}📍 {{ e.location }}{% endif %}
+        </div>
+        {% if e.description %}<div style="font-size:0.87rem;margin-top:6px;color:var(--muted);">{{ e.description }}</div>{% endif %}
+      </div>
+      <a href="/events/delete/{{ e.id }}" class="btn btn-del btn-sm" onclick="return confirm('Delete this event?')">Delete</a>
+    </div>
+    {% endfor %}
+  </div>
+{% else %}
+  <div class="card" style="margin-bottom:2rem;"><div class="empty"><div class="ico">📅</div><p>No upcoming events. <a href="/events/add" style="color:var(--accent);">Create one!</a></p></div></div>
+{% endif %}
+
+{% if past %}
+<div class="sec-title" style="color:var(--muted);">Past Events</div>
+<div style="display:grid;gap:.75rem;">
+  {% for e in past %}
+  <div class="card" style="display:flex;gap:1.25rem;align-items:center;opacity:.55;">
+    <div style="background:var(--surface2);border-radius:10px;padding:10px 14px;text-align:center;min-width:60px;border:1px solid var(--border);">
+      <div style="font-family:var(--hf);font-size:1.4rem;font-weight:800;line-height:1;">{{ e.date[8:10] }}</div>
+      <div style="font-size:0.68rem;color:var(--muted);text-transform:uppercase;">{{ e.date[5:7] }}/{{ e.date[:4] }}</div>
+    </div>
+    <div style="flex:1;">
+      <div style="font-family:var(--hf);font-weight:700;text-decoration:line-through;">{{ e.title }}</div>
+      {% if e.location %}<div style="color:var(--muted);font-size:0.83rem;">📍 {{ e.location }}</div>{% endif %}
+    </div>
+    <a href="/events/delete/{{ e.id }}" class="btn btn-del btn-sm" onclick="return confirm('Delete?')">Delete</a>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+
+{% endblock %}

@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Add Event — ClubHub{% endblock %}
+{% block content %}
+<h1>Add Event</h1><p class="sub">Create a new club event</p>
+<div class="card" style="max-width:580px;">
+  <form method="POST" action="/events/add">
+    <div class="form-row" style="margin-bottom:1rem;">
+      <div class="fg full"><label>Event Title *</label><input type="text" name="title" placeholder="e.g. Monthly Meetup" required></div>
+      <div class="fg"><label>Date *</label><input type="date" name="date" required></div>
+      <div class="fg"><label>Time</label><input type="time" name="time"></div>
+      <div class="fg full"><label>Location</label><input type="text" name="location" placeholder="e.g. Community Hall"></div>
+      <div class="fg full"><label>Description</label><textarea name="description" placeholder="What's this event about?"></textarea></div>
+    </div>
+    <div style="display:flex;gap:.75rem;">
+      <button type="submit" class="btn btn-primary">Save Event</button>
+      <a href="/events" class="btn btn-sec">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}
