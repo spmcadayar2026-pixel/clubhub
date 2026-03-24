@@ -1,4 +1,4 @@
-from app import app, init_db
+from clubhub_final.app import app, init_db   ✅
 init_db()
 
 if __name__ == "__main__":
